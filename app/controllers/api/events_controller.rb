@@ -16,9 +16,18 @@ class Api::EventsController < ApplicationController
   end
 
   def create
+    event = Event.create(event_params)
+    render json: event
   end
 
   def destroy
   end
+
+  private
+
+  def event_params
+    params.require(:event).permit(:name, :start_date, :recurrences, :delivery_date, :calculated_date)
+  end
+
 
 end

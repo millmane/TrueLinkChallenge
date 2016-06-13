@@ -57,6 +57,7 @@
 	
 	var ApiUtil = __webpack_require__(229);
 	var EventStore = __webpack_require__(236);
+	var Index = __webpack_require__(254);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -67,7 +68,6 @@
 	    return React.createElement(
 	      'div',
 	      null,
-	      'hi hihi',
 	      this.props.children
 	    );
 	  }
@@ -76,7 +76,11 @@
 	var Router = React.createElement(
 	  Router,
 	  { history: hashHistory },
-	  React.createElement(Route, { path: '/', component: App })
+	  React.createElement(
+	    Route,
+	    { path: '/', component: App },
+	    React.createElement(IndexRoute, { component: Index })
+	  )
 	);
 	
 	document.addEventListener('DOMContentLoaded', function () {
@@ -26252,6 +26256,10 @@
 	  return Object.assign({}, _events);
 	};
 	
+	EventStore.find = function (id) {
+	  return Object.assign({}, _events[id]);
+	};
+	
 	EventStore.__onDispatch = function (payload) {
 	  switch (payload.actionType) {
 	    case EventConstants.EVENTS_RECEIVED:
@@ -32707,6 +32715,58 @@
 	
 	module.exports = FluxMixinLegacy;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+
+/***/ },
+/* 254 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactRouter = __webpack_require__(168);
+	var hashHistory = __webpack_require__(168).hashHistory;
+	var EventStore = __webpack_require__(236);
+	
+	var Index = React.createClass({
+	  displayName: 'Index',
+	
+	
+	  _eventsChanged: function () {
+	    this.setState({ events: EventStore.allEvents() });
+	  },
+	
+	  getInitialState: function () {
+	    return { events: EventStore.all() };
+	  },
+	
+	  componentDidMount: function () {
+	    this.eventListener = EventStore.addListener(this._eventsChanged);
+	  },
+	
+	  componentWillUnmount: function () {
+	    this.eventListener.remove();
+	  },
+	
+	  render: function () {
+	    var events = this.state.events;
+	    var eventKeys = Object.keys(events);
+	    debugger;
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'h1',
+	        null,
+	        'Index'
+	      ),
+	      eventKeys.map(function (key) {
+	        return React.createElement(IndexItem, {
+	          event: events[key],
+	          key: key });
+	      })
+	    );
+	  }
+	});
+	
+	module.exports = Index;
 
 /***/ }
 /******/ ]);

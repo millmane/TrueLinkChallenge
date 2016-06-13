@@ -9,6 +9,11 @@ EventStore.all = function () {
   return Object.assign({}, _events);
 };
 
+EventStore.find = function(id){
+  return Object.assign({}, _events[id]);
+};
+
+
 EventStore.__onDispatch = function (payload) {
   switch(payload.actionType) {
     case EventConstants.EVENTS_RECEIVED:

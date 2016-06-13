@@ -11,6 +11,7 @@ var hashHistory = ReactRouter.hashHistory;
 
 var ApiUtil = require('./util/api_util.js');
 var EventStore = require('./stores/event.js');
+var Index = require('./components/index.jsx');
 
 
 var App = React.createClass({
@@ -19,9 +20,6 @@ var App = React.createClass({
 
     return (
       <div>
-        hi
-        hihi
-
         {this.props.children}
       </div>
     );
@@ -31,6 +29,7 @@ var App = React.createClass({
 var Router = (
   <Router history={hashHistory}>
     <Route path="/" component={App}>
+      <IndexRoute component={Index}/>
     </Route>
   </Router>
 );
