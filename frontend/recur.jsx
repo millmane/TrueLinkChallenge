@@ -9,6 +9,10 @@ var Route = ReactRouter.Route;
 var IndexRoute = ReactRouter.IndexRoute;
 var hashHistory = ReactRouter.hashHistory;
 
+var ApiUtil = require('./util/api_util.js');
+var EventStore = require('./stores/event.js');
+
+
 var App = React.createClass({
 
   render: function () {
@@ -17,7 +21,7 @@ var App = React.createClass({
       <div>
         hi
         hihi
-        
+
         {this.props.children}
       </div>
     );
