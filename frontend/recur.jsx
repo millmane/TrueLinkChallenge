@@ -12,7 +12,6 @@ var hashHistory = ReactRouter.hashHistory;
 var App = React.createClass({
 
   render: function () {
-    var Link = ReactRouter.Link;
 
     return (
       <div>
