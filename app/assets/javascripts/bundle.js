@@ -64,7 +64,6 @@
 	
 	
 	  render: function () {
-	
 	    return React.createElement(
 	      'div',
 	      null,
@@ -25886,14 +25885,14 @@
 	    $.get('api/events', filters, function (Events) {
 	      ServerActions.receiveAll(Events);
 	    });
-	  },
-	  createEvent: function (data) {
-	    $.post('api/events', { event: data }, function (event) {
-	      ServerActions.receiveSingleBench(event);
-	    });
 	  }
 	};
-	// window.ApiUtil = ApiUtil;
+	// createEvent: function(data){
+	//   $.post('api/events', { event: data }, function(event) {
+	//     ServerActions.receiveSingleEvent(event);
+	//   });
+	// }
+	window.ApiUtil = ApiUtil;
 	
 	module.exports = ApiUtil;
 
@@ -26230,6 +26229,7 @@
 
 	var AppDispatcher = __webpack_require__(230);
 	var EventConstants = __webpack_require__(234);
+	
 	ServerActions = {
 	  receiveAll: function (events) {
 	    AppDispatcher.dispatch({
@@ -26253,6 +26253,7 @@
 	var _events = {};
 	
 	EventStore.all = function () {
+	
 	  return Object.assign({}, _events);
 	};
 	
@@ -26269,7 +26270,7 @@
 	  }
 	};
 	
-	// window.EventStore = EventStore;
+	window.EventStore = EventStore;
 	
 	module.exports = EventStore;
 
@@ -32724,13 +32725,15 @@
 	var ReactRouter = __webpack_require__(168);
 	var hashHistory = __webpack_require__(168).hashHistory;
 	var EventStore = __webpack_require__(236);
+	var ClientActions = __webpack_require__(255);
+	var IndexItem = __webpack_require__(256);
 	
 	var Index = React.createClass({
 	  displayName: 'Index',
 	
 	
 	  _eventsChanged: function () {
-	    this.setState({ events: EventStore.allEvents() });
+	    this.setState({ events: EventStore.all() });
 	  },
 	
 	  getInitialState: function () {
@@ -32739,6 +32742,7 @@
 	
 	  componentDidMount: function () {
 	    this.eventListener = EventStore.addListener(this._eventsChanged);
+	    ClientActions.fetchEvents();
 	  },
 	
 	  componentWillUnmount: function () {
@@ -32748,7 +32752,7 @@
 	  render: function () {
 	    var events = this.state.events;
 	    var eventKeys = Object.keys(events);
-	    debugger;
+	
 	    return React.createElement(
 	      'div',
 	      null,
@@ -32767,6 +32771,50 @@
 	});
 	
 	module.exports = Index;
+
+/***/ },
+/* 255 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var ApiUtil = __webpack_require__(229);
+	
+	var ClientActions = {
+	  fetchEvents: ApiUtil.fetchEvents
+	};
+	
+	// createEvent: ApiUtil.createEvent,
+	module.exports = ClientActions;
+
+/***/ },
+/* 256 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactRouter = __webpack_require__(168);
+	var hashHistory = __webpack_require__(168).hashHistory;
+	
+	var IndexItem = React.createClass({
+	  displayName: 'IndexItem',
+	
+	  handleClick: function () {
+	    var eventID = this.props.event.id;
+	    hashHistory.push("events/" + eventID);
+	  },
+	
+	  render: function () {
+	    var event = this.props.event;
+	
+	    return React.createElement(
+	      'div',
+	      { className: 'event-index-item',
+	        onClick: this.handleClick,
+	        key: this.props.key },
+	      event.name
+	    );
+	  }
+	});
+	
+	module.exports = IndexItem;
 
 /***/ }
 /******/ ]);

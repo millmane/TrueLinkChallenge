@@ -6,13 +6,13 @@ var EventStore = new Store(AppDispatcher);
 var _events = {};
 
 EventStore.all = function () {
+
   return Object.assign({}, _events);
 };
 
 EventStore.find = function(id){
   return Object.assign({}, _events[id]);
 };
-
 
 EventStore.__onDispatch = function (payload) {
   switch(payload.actionType) {
@@ -23,6 +23,6 @@ EventStore.__onDispatch = function (payload) {
   }
 };
 
-// window.EventStore = EventStore;
+window.EventStore = EventStore;
 
 module.exports = EventStore;

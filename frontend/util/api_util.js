@@ -9,12 +9,12 @@ var ApiUtil = {
       ServerActions.receiveAll(Events);
     });
   },
-  createEvent: function(data){
-    $.post('api/events', { event: data }, function(event) {
-      ServerActions.receiveSingleBench(event);
-    });
-  }
+  // createEvent: function(data){
+  //   $.post('api/events', { event: data }, function(event) {
+  //     ServerActions.receiveSingleEvent(event);
+  //   });
+  // }
 };
-  // window.ApiUtil = ApiUtil;
+  window.ApiUtil = ApiUtil;
 
   module.exports = ApiUtil;

@@ -1,5 +1,6 @@
 var AppDispatcher = require('../dispatcher/dispatcher');
 var EventConstants = require('../constants/event_constants');
+
 ServerActions = {
   receiveAll: function(events){
     AppDispatcher.dispatch({

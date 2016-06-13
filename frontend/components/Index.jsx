@@ -2,11 +2,13 @@ var React = require('react');
 var ReactRouter = require('react-router');
 var hashHistory = require('react-router').hashHistory;
 var EventStore = require('../stores/event.js');
+var ClientActions = require('../actions/client_actions.js');
+var IndexItem = require('./IndexItem.jsx');
 
 var Index = React.createClass({
 
   _eventsChanged: function(){
-  this.setState({events: EventStore.allEvents()});
+    this.setState({events: EventStore.all()});
   },
 
   getInitialState: function(){
@@ -15,6 +17,7 @@ var Index = React.createClass({
 
   componentDidMount: function(){
     this.eventListener = EventStore.addListener(this._eventsChanged);
+    ClientActions.fetchEvents();
   },
 
   componentWillUnmount: function(){
@@ -24,10 +27,11 @@ var Index = React.createClass({
   render: function(){
     var events = this.state.events;
     var eventKeys = Object.keys(events);
-debugger
+
     return (
       <div>
         <h1>Index</h1>
+
           {
             eventKeys.map(function(key){
               return (<IndexItem

@@ -15,7 +15,6 @@ var IndexItem = React.createClass({
         <div className="event-index-item"
              onClick={this.handleClick}
              key={this.props.key}>
-             indexitem
           {event.name}
         </div>
     );
