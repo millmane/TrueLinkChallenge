@@ -20,6 +20,11 @@ EventStore.__onDispatch = function (payload) {
       _events = payload.events;
       EventStore.__emitChange();
       break;
+    case EventConstants.EVENT_RECEIVED:
+      var event_id = payload.event.id;
+      _events[event_id] = payload.event;
+      EventStore.__emitChange();
+      break;
   }
 };
 

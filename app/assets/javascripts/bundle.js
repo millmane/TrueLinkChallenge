@@ -57,16 +57,31 @@
 	
 	var ApiUtil = __webpack_require__(229);
 	var EventStore = __webpack_require__(236);
-	var Index = __webpack_require__(254);
+	var Index = __webpack_require__(257);
+	var EventForm = __webpack_require__(258);
 	
 	var App = React.createClass({
 	  displayName: 'App',
 	
 	
+	  navigateToNew: function () {
+	    hashHistory.push("/events/new");
+	  },
+	
+	  handleCreate: function (e) {
+	    e.preventDefault();
+	    this.navigateToNew();
+	  },
+	
 	  render: function () {
 	    return React.createElement(
 	      'div',
 	      null,
+	      React.createElement(
+	        'button',
+	        { onClick: this.handleCreate },
+	        'Create'
+	      ),
 	      this.props.children
 	    );
 	  }
@@ -78,7 +93,8 @@
 	  React.createElement(
 	    Route,
 	    { path: '/', component: App },
-	    React.createElement(IndexRoute, { component: Index })
+	    React.createElement(IndexRoute, { component: Index }),
+	    React.createElement(Route, { path: 'events/new', component: EventForm })
 	  )
 	);
 	
@@ -25885,13 +25901,13 @@
 	    $.get('api/events', filters, function (Events) {
 	      ServerActions.receiveAll(Events);
 	    });
+	  },
+	  createEvent: function (data) {
+	    $.post('api/events', { event: data }, function (event) {
+	      ServerActions.receiveSingleEvent(event);
+	    });
 	  }
 	};
-	// createEvent: function(data){
-	//   $.post('api/events', { event: data }, function(event) {
-	//     ServerActions.receiveSingleEvent(event);
-	//   });
-	// }
 	window.ApiUtil = ApiUtil;
 	
 	module.exports = ApiUtil;
@@ -26218,6 +26234,7 @@
 	var EventConstants = {
 	  FETCHEVENTS: "FETCHEEVENTS",
 	  EVENTS_RECEIVED: "EVENTSRECEIVED",
+	  EVENT_RECEIVED: "EVENTRECEIVED",
 	  ERROR: "ERROR"
 	};
 	
@@ -26235,6 +26252,12 @@
 	    AppDispatcher.dispatch({
 	      actionType: EventConstants.EVENTS_RECEIVED,
 	      events: events
+	    });
+	  },
+	  receiveSingleEvent: function (bench) {
+	    AppDispatcher.dispatch({
+	      actionType: EventConstants.EVENT_RECEIVED,
+	      event: event
 	    });
 	  }
 	};
@@ -26265,6 +26288,11 @@
 	  switch (payload.actionType) {
 	    case EventConstants.EVENTS_RECEIVED:
 	      _events = payload.events;
+	      EventStore.__emitChange();
+	      break;
+	    case EventConstants.EVENT_RECEIVED:
+	      var event_id = payload.event.id;
+	      _events[event_id] = payload.event;
 	      EventStore.__emitChange();
 	      break;
 	  }
@@ -32718,7 +32746,52 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 254 */
+/* 254 */,
+/* 255 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var ApiUtil = __webpack_require__(229);
+	
+	var ClientActions = {
+	  fetchEvents: ApiUtil.fetchEvents,
+	  createEvent: ApiUtil.createEvent
+	};
+	
+	module.exports = ClientActions;
+
+/***/ },
+/* 256 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactRouter = __webpack_require__(168);
+	var hashHistory = __webpack_require__(168).hashHistory;
+	
+	var IndexItem = React.createClass({
+	  displayName: 'IndexItem',
+	
+	  handleClick: function () {
+	    var eventID = this.props.event.id;
+	    hashHistory.push("events/" + eventID);
+	  },
+	
+	  render: function () {
+	    var event = this.props.event;
+	
+	    return React.createElement(
+	      'div',
+	      { className: 'event-index-item',
+	        onClick: this.handleClick,
+	        key: this.props.key },
+	      event.name
+	    );
+	  }
+	});
+	
+	module.exports = IndexItem;
+
+/***/ },
+/* 257 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -32773,48 +32846,103 @@
 	module.exports = Index;
 
 /***/ },
-/* 255 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var ApiUtil = __webpack_require__(229);
-	
-	var ClientActions = {
-	  fetchEvents: ApiUtil.fetchEvents
-	};
-	
-	// createEvent: ApiUtil.createEvent,
-	module.exports = ClientActions;
-
-/***/ },
-/* 256 */
+/* 258 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var ReactRouter = __webpack_require__(168);
+	var ClientActions = __webpack_require__(255);
 	var hashHistory = __webpack_require__(168).hashHistory;
 	
-	var IndexItem = React.createClass({
-	  displayName: 'IndexItem',
+	var EventForm = React.createClass({
+	  displayName: 'EventForm',
 	
-	  handleClick: function () {
-	    var eventID = this.props.event.id;
-	    hashHistory.push("events/" + eventID);
+	
+	  getInitialState: function () {
+	    return {
+	      name: "",
+	      startDate: "",
+	      recurrences: 1,
+	      deliveryDate: "",
+	      calculatedDate: ""
+	    };
+	  },
+	
+	  handleSubmit: function (e) {
+	    e.preventDefault();
+	    this.setState({
+	      name: e.target.Name.value,
+	      startDate: e.target.StartDate.value,
+	      recurrences: e.target.Recurrences.value,
+	      deliveryDate: e.target.DeliveryDate.value,
+	      calculatedDate: ""
+	    });
+	    var _event = Object.assign({}, this.state);
+	
+	    ClientActions.createEvent(_event);
+	    this.navigateToSearch();
+	  },
+	
+	  navigateToSearch: function () {
+	    hashHistory.push("/");
+	  },
+	
+	  handleCancel: function (e) {
+	    e.preventDefault();
+	    this.navigateToSearch();
 	  },
 	
 	  render: function () {
-	    var event = this.props.event;
-	
 	    return React.createElement(
 	      'div',
-	      { className: 'event-index-item',
-	        onClick: this.handleClick,
-	        key: this.props.key },
-	      event.name
+	      null,
+	      React.createElement(
+	        'h3',
+	        null,
+	        'Create an Event!'
+	      ),
+	      React.createElement(
+	        'form',
+	        { onSubmit: this.handleSubmit },
+	        React.createElement(
+	          'label',
+	          null,
+	          'Name'
+	        ),
+	        React.createElement('input', { type: 'text', id: 'Name' }),
+	        React.createElement('br', null),
+	        React.createElement(
+	          'label',
+	          null,
+	          'Start Date'
+	        ),
+	        React.createElement('input', { type: 'date', id: 'StartDate' }),
+	        React.createElement('br', null),
+	        React.createElement(
+	          'label',
+	          null,
+	          'Recurrences'
+	        ),
+	        React.createElement('input', { type: 'number', id: 'Recurrences' }),
+	        React.createElement('br', null),
+	        React.createElement(
+	          'label',
+	          null,
+	          'Delivery Date'
+	        ),
+	        React.createElement('input', { type: 'date', id: 'DeliveryDate' }),
+	        React.createElement('br', null),
+	        React.createElement('input', { type: 'submit', value: 'create event' })
+	      ),
+	      React.createElement(
+	        'button',
+	        { onClick: this.handleCancel },
+	        'Cancel'
+	      )
 	    );
 	  }
 	});
 	
-	module.exports = IndexItem;
+	module.exports = EventForm;
 
 /***/ }
 /******/ ]);

@@ -7,7 +7,13 @@ ServerActions = {
       actionType: EventConstants.EVENTS_RECEIVED,
       events: events
     });
-  }
+  },
+  receiveSingleEvent: function(bench){
+    AppDispatcher.dispatch({
+      actionType: EventConstants.EVENT_RECEIVED,
+      event: event
+  });
+}
 };
 
 module.exports = ServerActions;
