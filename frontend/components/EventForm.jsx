@@ -17,6 +17,7 @@ var EventForm = React.createClass({
 
   handleSubmit: function(e){
     e.preventDefault();
+    debugger
     this.setState({
       name: e.target.Name.value,
       startDate: e.target.StartDate.value,
