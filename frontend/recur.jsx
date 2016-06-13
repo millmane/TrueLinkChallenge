@@ -15,6 +15,9 @@ var App = React.createClass({
 
     return (
       <div>
+        hi
+        hihi
+        
         {this.props.children}
       </div>
     );
